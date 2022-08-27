@@ -23,4 +23,6 @@
 
 ### c. Estime una brecha salarial condicional que incorpore variables de control tales como características laborales y laborales similares.
 
+### • Discusión de la variable elegida como medida de la Renta, si es igual o diferente al punto anterior. • Interpretación de los coeficientes "femeninos", una comparación entre los modelos y el ajuste en la muestra. • Discusión sobre las edades máximas implícitas y su similitud/diferencia estadística. • Discusión reflexiva sobre la brecha de ingresos incondicional y condicional, buscando responder si los cambios en el coeficiente son evidencia de un problema de selección, un "problema de discriminación" o ninguno de estos problemas.
+
 
