@@ -15,8 +15,12 @@
 
 
 
-# 3. brecha salarial de género
+# 3. brecha salarial de género.
 
+### a. Estime y discuta brecha de ingresos incondicional.
 
+### b. Estime, grafique y discuta el perfil de edad-ingresos pronosticado y las "edades máximas" implícitas con los respectivos intervalos de confianza por género.
+
+### c. Estime una brecha salarial condicional que incorpore variables de control tales como características laborales y laborales similares.
 
 
