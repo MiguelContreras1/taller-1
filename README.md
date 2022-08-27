@@ -15,7 +15,7 @@
 
 
 
-# 3. brecha salarial de género.
+## 3. brecha salarial de género.
 
 ### a. Estime y discuta brecha de ingresos incondicional.
 
