@@ -48,3 +48,11 @@
 
 ### d. LOOCV. Para los dos modelos con el error predictivo más bajo en la sección anterior, calcule el error predictivo utilizando la validación cruzada Leave-one-out (LOOCV). Compare los resultados del error de prueba con los obtenidos con el enfoque del conjunto de validación y explore los vínculos potenciales con la estadística de influencia.
 
+
+
+# CÓDIGO
+
+rm(list = ls())
+
+library
+
