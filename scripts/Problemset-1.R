@@ -1,4 +1,4 @@
-# PROBLEM SET 1
+# PROBLEM SET 1 
 #Paquetes a usar
   install.packages("pacman")
   install.packages("rvest")
@@ -37,7 +37,7 @@ print(url_base)
   
 #Restrinjirlo solo para age>=18 y empleado 
   base=subset(df, df$age>17)
-  base=subset(base, base$p6240==1) #¿ocun(2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+  base=subset(base, base$p6240==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
   
 #Eliminar N/A edad, género ingreso 
     #identificar cuántos  
@@ -76,7 +76,12 @@ print(url_base)
       #y_ingLab_m
       #y_total_m
       #y_total_m_ha
-  
+      #p6500 ingreso antes de descuentos cuánto ganó el mes pasado en este empleo 
+      #p6585S3 Subsidios 
+      #p6590S1 
+      #p6585S2a2 Subsidio de transporte
+      #p6240 actividad qué ocupó la mayor parte del tiempo la semana pasada
+    
   #Características trabajo/empresa
       #sizeFirm
       #microempresa
@@ -84,21 +89,29 @@ print(url_base)
       #hoursWorkActualSecondJob
       #hoursWorkUsual
       #informal
+      #relab
   
-#Missing 
-  
-#Estructura de los datos
-  str(df)
-
-#Variable (s) de ingreso 
-  #p6500 ingreso antes de descuentos cuánto ganó el mes pasado en este empleo 
-  #p6585S3 Subsidios 
-  #p6590S1 
-  #p6585S2a2 Subsidio de transporte
-  #p6240 actividad qué ocupó la mayor parte del tiempo la semana pasada
-#Missings  
-  
-#Análisis descriptivo  
+  #Missings  
+    #individuo
+    sum(is.na(base$estrato1)) #0
+    sum(is.na(base$maxEducLevel)) #1
+    sum(is.na(base$college)) #0
+    sum(is.na (base$regSalud)) #1155
+    sum(is.na(base$cotPension )) #0
+    
+    #trabajo
+    sum(is.na(base$sizeFirm)) #0
+    sum(is.na(base$microempresa)) #0
+    sum(is.na(base$oficio)) #0
+    sum(is.na(base$hoursWorkActualSecondJob))#13632
+    sum(is.na(base$hoursWorkUsual))#0
+    sum(is.na(base$informal)) #0
+    sum(is.na(base$relab))#0
+    
+    
+    
+    
+    #Análisis descriptivo  
 
 # cambiar nombre de variable p6040 a "edad"
 edad <- p6040
