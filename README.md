@@ -40,7 +40,7 @@
 #### a. Dividir la muestra en dos: una muestra de entrenamiento (70%) y otra de prueba (30%). (No olvide establecer una semilla para lograr la reproducibilidad. En R, por ejemplo, puede usar set.seed(10101), donde 10101 es la semilla).
 
 
-### b. Informe y compare el rendimiento predictivo de todas las especificaciones anteriores con al menos cinco (5) especificaciones adicionales que exploran las no linealidades y la complejidad.
+#### b. Informe y compare el rendimiento predictivo de todas las especificaciones anteriores con al menos cinco (5) especificaciones adicionales que exploran las no linealidades y la complejidad.
 
 
 #### c. Comente i. Sobre la métrica de rendimiento que ha elegido y su justificación para elegirla. ii. Acerca de la especificación con el error de predicción más bajo. iii. Para la especificación, explore aquellas observaciones que parecen "errar el blanco". Para hacerlo, calcule la estadística de influencia para cada observación en la muestra de prueba y examine su distribución. ¿Están las observaciones en las colas de la distribución de la estadística de influencia? ¿Son estos valores atípicos personas potenciales que la DIAN debería investigar, o son simplemente el producto de un modelo asombrado?
@@ -55,5 +55,5 @@
 #### p6040 = edad
 #### p6050 = ingreso
 #### p6050 = sexo
-### se requiere: 1-cambiar por 0 todas las observaciones < 18 en edad. 2-cambiar valores en sexo  0=hombre y 1=mujer*
+#### se requiere: 1-cambiar por 0 todas las observaciones < 18 en edad. 2-cambiar valores en sexo  0=hombre y 1=mujer*
 #### loging = logaritmo del ingreso
