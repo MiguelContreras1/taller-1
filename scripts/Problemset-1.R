@@ -2,6 +2,12 @@
 #Paquetes a usar
   install.packages("pacman")
   install.packages("rvest")
+  install.packages("dplyr")
+  install.packages("tibble")
+  install.packages("skimr")
+  library(skimr)
+  library(tibble)
+  library(dplyr)
   library(pacman)
   library(rvest, tidyverse)
 
@@ -38,18 +44,7 @@ print(url_base)
 #Restrinjirlo solo para age>=18 y empleado 
   base=subset(df, df$age>17)
   base=subset(base, base$p6240==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-  
-#Eliminar N/A edad, género ingreso 
-    #identificar cuántos  
-    sum(is.na(base$age)) #0
-    sum(is.na(base$sex)) #0
-    sum(is.na(base$p6500)) #4535
-    sum(is.na(base$ingtot)) #0
-    sum(is.na(base$maxEducLevel)) #1
-    sum(is.na(base$y_total_m)) #1265
-    
-    #Eliminarlos 
-    df = subset(x = df, subset = is.na(age)==FALSE)
+
   
 #FIltro de variables 
   #Caracteristicas persona
@@ -107,34 +102,66 @@ print(url_base)
     sum(is.na(base$hoursWorkUsual))#0
     sum(is.na(base$informal)) #0
     sum(is.na(base$relab))#0
+   
+    #Ingreso 
+    sum(is.na(base$age)) #0
+    sum(is.na(base$sex)) #0
+    sum(is.na(base$p6500)) #4535
+    sum(is.na(base$ingtot)) #0
+    sum(is.na(base$maxEducLevel)) #1
+    sum(is.na(base$y_total_m)) #1265
+    
+    #Eliminarlos /reemplazarlos 
+    base2 = subset(x = df, subset = is.na(age)==FALSE) #eliminarlo 
+    base2<- mutate_if(base$maxEducLevel, is.integer, ~replace(., is.na(.), 0))
+    is.integer(base$maxEducLevel)
+   
     
     
+     #Análisis descriptivo  
     
-    
-    #Análisis descriptivo  
+variables=data.frame(base$edad, base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud,
+                     base$cotPension, base$ingtot, base$sizeFirm, 
+                     base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
+                     base$informal ,base$relab)
 
-# cambiar nombre de variable p6040 a "edad"
-edad <- p6040
-# cambiar nombre de variable p6500 a "ingreso"
-ingreso <- p6050
-# cambiar por 0 todas las observaciones < 18, en p6040.
+summary (base$edad, base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud,
+         base$cotPension, base$ingtot, base$sizeFirm, 
+         base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
+         base$informal ,base$relab)
+
 # crear variable "edad2"
 edad2 <- (edad^2)
-# dat = cbind(edad, edad2, ingreso)
-dat = cbind(edad, edad2, ingreso)
+base = cbind(edad2)
 # chequear variables con skim(dat) 
-skim(dat)
+    skim(base)
+    base %>%
+      dplyr::group_by(sex) %>%
+      skim()
+    descriptivas<-summary(base)
+      view(descriptivas)
+    
 # correr regresión 
-lm(ingreso ~ edad edad2, data = dat)
+  regresion1<-lm(ingtot ~ age , data = base)
+
 # asignar nombre mod1 a regresión 
-mod1 = lm(ingreso ~ edad edad2, data = dat)
+  mod1 = lm(ingreso ~ edad edad2, data = dat)
 # ver coeficiente de la regresión
-lm_summary = summary(mod1)$coefficients
-lm_summary_print = lm_summary
+  lm_summary = summary(mod1)$coefficients
+  lm_summary_print = lm_summary
 # R base output # summary(mod1)
 # ggplot de la gráfica de la clase de Lucas, cambiar nombres variables y las labs por edad (eje x) e ingreso (eje y)
 # crear variable de logaritmo de p6500 y cambiar nombre a "logingreso"
-loging <- log(ingreso)
+  loging <- log(ingreso)
 # # cambiar nombre de variable p6020 a "sexo"
-sexo <- p6050
+  sexo <- p6050
 
+#Errores bootstrap
+    install.packages("boot")
+    boot(data, statistic, R)
+    
+    eta.fn<-function(data,index)f
+    coef(lm(consumption~price+income, data = data, subset = index))
+    
+    boot(data = gas, statistic = eta.fn, R = 1000)
+    
