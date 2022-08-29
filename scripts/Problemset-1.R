@@ -1,12 +1,40 @@
 # PROBLEM SET 1
-#hola
-# limpiar
-rm(list=ls())
-# cargar librerías
-library(pacman)
-library(rvest, tidyverse)
-# cargar bases y unirlas
-# código Laura
+#Paquetes a usar
+  install.packages("pacman")
+  install.packages("rvest")
+  library(pacman)
+  library(rvest, tidyverse)
+
+#Lectura de URL
+  url <- "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html URL chunk 1"
+  browseURL(url)
+
+url_base <- paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_", 1:10, ".html")
+print(url_base)
+  #[1] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html"
+  #[2] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_2.html"
+  #[3] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_3.html"
+  #[4] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_4.html"
+  #[5] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_5.html"
+  #[6] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_6.html"
+  #[7] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_7.html"
+  #[8] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_8.html"
+  #[9] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_9.html"
+  #[10] "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_10.html"
+  
+
+#loop para unir la base en df
+  df <- data.frame()
+  for (url in url_base) {
+    print(url)
+    temp <- read_html(url) %>%
+      html_table()
+    temp <- as.data.frame(temp[[1]])
+    df <- rbind(df, temp)
+  }
+  
+  head(df)
+
 # cambiar nombre de variable p6040 a "edad"
 edad <- p6040
 # cambiar nombre de variable p6500 a "ingreso"
