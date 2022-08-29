@@ -34,6 +34,71 @@ print(url_base)
   }
   
   head(df)
+  
+#Restrinjirlo solo para age>=18 y empleado 
+  base=subset(df, df$age>17)
+  base=subset(base, base$p6240==1) #¿ocun(2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+  
+#Eliminar N/A edad, género ingreso 
+    #identificar cuántos  
+    sum(is.na(base$age)) #0
+    sum(is.na(base$sex)) #0
+    sum(is.na(base$p6500)) #4535
+    sum(is.na(base$ingtot)) #0
+    sum(is.na(base$maxEducLevel)) #1
+    sum(is.na(base$y_total_m)) #1265
+    
+    #Eliminarlos 
+    df = subset(x = df, subset = is.na(age)==FALSE)
+  
+#FIltro de variables 
+  #Caracteristicas persona
+      #college
+      #Educlevel 
+      #age
+      #estrato1
+      #sex
+      #regSalud
+      #cotPension
+  #Variables ingreso 
+      #p6585S2a2 Subsidio de transporte
+      #p6630S1a1 Prima de servicios (12 meses)
+      #p7510S6a1 cesantías (12 meses)
+      #p6630S2a1 prima navidad (12 meses)
+      #p6500 ingreso antes de descuentos cuánto ganó el mes pasado en este empleo 
+      #p6585S3 Subsidios 
+      #impa ingreso monetario de la primera actividad antes de imputación
+      #isa ingreso monetario de la segunda actividad antes de imputación
+      #ingtotes ingreso total imputado
+      #ingtot ingreso total
+      #ingtotob Ingreso total observado
+      #y_salary_m 
+      #y_ingLab_m
+      #y_total_m
+      #y_total_m_ha
+  
+  #Características trabajo/empresa
+      #sizeFirm
+      #microempresa
+      #oficio (qué hace)
+      #hoursWorkActualSecondJob
+      #hoursWorkUsual
+      #informal
+  
+#Missing 
+  
+#Estructura de los datos
+  str(df)
+
+#Variable (s) de ingreso 
+  #p6500 ingreso antes de descuentos cuánto ganó el mes pasado en este empleo 
+  #p6585S3 Subsidios 
+  #p6590S1 
+  #p6585S2a2 Subsidio de transporte
+  #p6240 actividad qué ocupó la mayor parte del tiempo la semana pasada
+#Missings  
+  
+#Análisis descriptivo  
 
 # cambiar nombre de variable p6040 a "edad"
 edad <- p6040
