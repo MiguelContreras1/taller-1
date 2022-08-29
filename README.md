@@ -50,9 +50,10 @@
 
 
 
-# CÓDIGO
+# Variables
 
-rm(list = ls())
-
-library
-
+### p6040 = edad
+### p6050 = ingreso
+### p6050 = sexo
+### se requiere: 1-cambiar por 0 todas las observaciones < 18 en edad. 2-cambiar valores en sexo  0=hombre y 1=mujer*
+### loging = logaritmo del ingreso
