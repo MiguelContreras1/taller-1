@@ -5,11 +5,15 @@
   install.packages("dplyr")
   install.packages("tibble")
   install.packages("skimr")
+  install.packages("ggplot2")
+  install.packages("keep")
+  library(ggplot2)
   library(skimr)
   library(tibble)
   library(dplyr)
   library(pacman)
   library(rvest, tidyverse)
+  library(keep)
 
 #Lectura de URL
   url <- "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html URL chunk 1"
@@ -43,9 +47,15 @@ print(url_base)
   
 #Restrinjirlo solo para age>=18 y empleado 
   base=subset(df, df$age>17)
-  base=subset(base, base$p6240==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-
-  
+  base=subset(base, base$ocu==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+  base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+  base2=subset(base2, age>17)
+  base=base[,-c(1)]
+  #lista <- as.list(c(base$college, base$Educlevel, base$age, base$estrato1, base$sex, base$regSalud, base$cotPension, base$ingtot, base$sizeFirm, base$microempresa, base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual, base$informal, base$relab))
+  #lista2 <- as.list(c('college', 'Educlevel', 'age', 'estrato1', 'sex', 'regSalud', 'cotPension', 'ingtot', 'sizeFirm','microempresa', 'oficio', 'hoursWorkActualSecondJob', 'hoursWorkUsual', 'informal', 'relab'))
+  #lista3 <- c(college, maxEducLevel, age, estrato1, sex, regSalud, cotPension, ingtot, sizeFirm, microempresa, oficio, hoursWorkActualSecondJob, hoursWorkUsual, informal, relab)
+ 
+  base2 <- select(base,college, maxEducLevel, age, estrato1, sex, regSalud, cotPension, ingtot, sizeFirm, microEmpresa, oficio, hoursWorkActualSecondJob, hoursWorkUsual, informal, relab )
 #FIltro de variables 
   #Caracteristicas persona
       #college
@@ -86,7 +96,8 @@ print(url_base)
       #informal
       #relab
   
-  #Missings  
+  #Missings 
+  
     #individuo
     sum(is.na(base$estrato1)) #0
     sum(is.na(base$maxEducLevel)) #1
@@ -116,19 +127,39 @@ print(url_base)
     base2<- mutate_if(base$maxEducLevel, is.integer, ~replace(., is.na(.), 0))
     is.integer(base$maxEducLevel)
    
+   
+    
+     #Análisis descriptivo
+    
+    ingreso <- summary(base2);ingreso
     
     
-     #Análisis descriptivo  
+    ## Media de ingresos
+    # por sexo
+    a <- base %>% group_by(sex) %>% summarize(mean(base$ingtot,na.rm = T));a
+    # por edad
+    b <- base %>% group_by(age) %>% summarize(mean(ingtot,na.rm = T));b 
+    # por estrato
+    c <- base %>% group_by(estrato1) %>% summarize(mean(ingtot,na.rm = T));c
+ 
+    #graficas
+    
+    #grafico de dispersi�n del ingreso promedio por sexo
+    grafico1 <- plot(a, main = "ingreso promedio por sexo", xlab = "sexo", ylab = "Ingreso promedio", pch = 21,  bg = "yellow", col = "red", cex = 1, lwd = 2)
+    ggsave(plot= grafico1 , file = "views/Grafico22.jpeg") # puedes agregar los temas predeterminados para mejorar la apariencia dle grafico
+    
+    #Grafica de ingreso promedio por edad
+    grafico2 <- plot(b,type="h",main = "ingreso promedio por edad", xlab = "Edad", ylab = "Ingreso promedio", col = "Darkblue",lwd=2, ylim=c(0,2000000),xlim=c(15,85))
+    ggsave(plot= grafico2 , file = "views/Grafico33.jpeg") # puedes agregar los temas predeterminados para mejorar la apariencia dle grafico
+    
+    
     
 variables=data.frame(base$edad, base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud,
                      base$cotPension, base$ingtot, base$sizeFirm, 
                      base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
                      base$informal ,base$relab)
 
-summary (base$edad, base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud,
-         base$cotPension, base$ingtot, base$sizeFirm, 
-         base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
-         base$informal ,base$relab)
+summary (base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud, base$cotPension, base$ingtot, base$sizeFirm, base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual, base$informal ,base$relab)
 
 # crear variable "edad2"
 edad2 <- (edad^2)
