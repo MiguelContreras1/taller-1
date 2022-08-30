@@ -27,7 +27,7 @@
 #### b. Estime, grafique y discuta el perfil de edad-ingresos pronosticado y las "edades máximas" implícitas con los respectivos intervalos de confianza por género.
 
 
-#### c. Estime una brecha salarial condicional que incorpore variables de control tales como características laborales y laborales similares.
+#### c. Estime una brecha salarial condicional que incorpore variables de control tales como características laborales y laborales similares. Para resaltar que los resultados son los mismos usando la regresión "larga" o FWL, incluya una comparación de ambos en sus resultados Incluya una tercera estimación usando FWL y bootstrap para construir el error estándar.
 
 
 #### • Discusión de la variable elegida como medida de la Renta, si es igual o diferente al punto anterior. • Interpretación de los coeficientes "femeninos", una comparación entre los modelos y el ajuste en la muestra. • Discusión sobre las edades máximas implícitas y su similitud/diferencia estadística. • Discusión reflexiva sobre la brecha de ingresos incondicional y condicional, buscando responder si los cambios en el coeficiente son evidencia de un problema de selección, un "problema de discriminación" o ninguno de estos problemas.
