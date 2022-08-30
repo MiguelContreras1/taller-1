@@ -132,7 +132,11 @@ print(url_base)
     
      #Análisis descriptivo
     
-    ingreso <- summary(base2);ingreso
+    ingreso <- data.table(as.data.frame(summary(base2))) ; ingreso
+    output <- capture.output(ingreso, file=NULL, append =FALSE)
+    output_ad <-as.data.frame(output) #convertir summary en tabla
+    write.table(x = output_ad, file = "summary.xlsx", sep = " ", 
+                row.names = FALSE, col.names = TRUE)
     
     
     ## Media de ingresos
@@ -160,7 +164,6 @@ variables=data.frame(base$edad, base$college ,base$Educlevel  ,base$age,base$est
                      base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
                      base$informal ,base$relab)
 
-summary (base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud, base$cotPension, base$ingtot, base$sizeFirm, base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual, base$informal ,base$relab)
 
 # crear variable "edad2"
 edad2 <- (edad^2)
