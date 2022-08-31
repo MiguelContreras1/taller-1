@@ -7,6 +7,13 @@
   install.packages("skimr")
   install.packages("ggplot2")
   install.packages("keep")
+  install.packages("WRS2")
+  install.packages("psych")
+  install.packages("rapportools")
+  install.packages("apply")
+  install.packages("lapply")
+  library(WRS2)
+  library(rapportools)
   library(ggplot2)
   library(skimr)
   library(tibble)
@@ -49,8 +56,8 @@ print(url_base)
 #Restrinjirlo solo para age>=18 y empleado 
   base=subset(df, df$age>17)
   base=subset(base, base$ocu==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-  base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-  base2=subset(base2, age>17)
+  #base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+  #base2=subset(base2, age>17)
   base=base[,-c(1)]
   #lista <- as.list(c(base$college, base$Educlevel, base$age, base$estrato1, base$sex, base$regSalud, base$cotPension, base$ingtot, base$sizeFirm, base$microempresa, base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual, base$informal, base$relab))
   #lista2 <- as.list(c('college', 'Educlevel', 'age', 'estrato1', 'sex', 'regSalud', 'cotPension', 'ingtot', 'sizeFirm','microempresa', 'oficio', 'hoursWorkActualSecondJob', 'hoursWorkUsual', 'informal', 'relab'))
@@ -100,52 +107,96 @@ print(url_base)
   #Missings 
   
     #individuo
-    sum(is.na(base$estrato1)) #0
-    sum(is.na(base$maxEducLevel)) #1
-    sum(is.na(base$college)) #0
-    sum(is.na (base$regSalud)) #1155
-    sum(is.na(base$cotPension )) #0
+    sum(is.na(base2$estrato1)) #0
+    sum(is.na(base2$maxEducLevel)) #1
+    sum(is.na(base2$college)) #0
+    sum(is.na (base2$regSalud)) #1420
+    sum(is.na(base2$cotPension )) #0
     
     #trabajo
-    sum(is.na(base$sizeFirm)) #0
-    sum(is.na(base$microempresa)) #0
-    sum(is.na(base$oficio)) #0
-    sum(is.na(base$hoursWorkActualSecondJob))#13632
-    sum(is.na(base$hoursWorkUsual))#0
-    sum(is.na(base$informal)) #0
-    sum(is.na(base$relab))#0
+    sum(is.na(base2$sizeFirm)) #0
+    sum(is.na(base2$microempresa)) #0
+    sum(is.na(base2$oficio)) #0
+    sum(is.na(base2$hoursWorkActualSecondJob))#15980
+    sum(is.na(base2$hoursWorkUsual))#0
+    sum(is.na(base2$informal)) #0
+    sum(is.na(base2$relab))#0
    
     #Ingreso 
-    sum(is.na(base$age)) #0
-    sum(is.na(base$sex)) #0
-    sum(is.na(base$p6500)) #4535
-    sum(is.na(base$ingtot)) #0
-    sum(is.na(base$maxEducLevel)) #1
-    sum(is.na(base$y_total_m)) #1265
+    sum(is.na(base2$age)) #0
+    sum(is.na(base2$sex)) #0
+    sum(is.na(base2$p6500)) #4535
+    sum(is.na(base2$ingtot)) #0
+    sum(is.na(base2$maxEducLevel)) #1
+    sum(is.na(base2$y_total_m)) #0
     
     #Eliminarlos /reemplazarlos 
-    base2 = subset(x = df, subset = is.na(age)==FALSE) #eliminarlo 
-    base2<- mutate_if(base$maxEducLevel, is.integer, ~replace(., is.na(.), 0))
-    is.integer(base$maxEducLevel)
+    base2 = subset(x = base2, subset = is.na(maxEducLevel)==FALSE) #eliminarlo
+    
+    
+    base2$regSalud = ifelse(is.na(base2$regSalud)==T,0,base2$regSalud)
+    base2$hoursWorkActualSecondJob = ifelse(is.na(base2$hoursWorkActualSecondJob)==T,0,base2$hoursWorkActualSecondJob)
    
-   
+    table(base2$regSalud, base2$maxEducLevel)
+    table(base2$regSalud, base2$age)
+    table(base2$regSalud, base2$sex)
+    table(base2$regSalud, base2$cotPension)
+    table(base2$regSalud, base2$maxEducLevel)
+    
+    table(base2$hoursWorkActualSecondJob, base2$sex)
+    table(base2$hoursWorkActualSecondJob, base2$age)
+    table(base2$hoursWorkActualSecondJob, base2$maxEducLevel)
+
+    
     
      #Análisis descriptivo
     
-    ingreso <- data.table(as.data.frame(summary(base2))) ; ingreso
+    data(base2)
+    describe(base2)
+    
+    
+    
+    ingreso <- (as.data.frame(summary(base2))) ; ingreso
     output <- capture.output(ingreso, file=NULL, append =FALSE)
     output_ad <-as.data.frame(output) #convertir summary en tabla
     write.table(x = output_ad, file = "summary.xlsx", sep = " ", 
                 row.names = FALSE, col.names = TRUE)
     
     
+    #outliers
+    
+    rp.outlier(base2[base2$ingtot=="2 Pints", "attractiveness"])
+    is.numeric(base2$ingtot)
+    
+    
+    #diferencia de medias
+    
+    dmedias<- t.test (base2$ingtot ~ base2$sex ) ;dmedias
+    Grafico_dmedias <- boxplot(base2$ingtot ~ base2$sex, col= "gray", xlab ="sexo", ylab = "ingreso total")
+    
+    gp <-  ggplot() + geom_histogram(data = base2,aes(x=ingtot));gp
+    g<- plot(base2$age, base2$ingtot)
+    
+    grafico1 <- ggplot() + geom_histogram(data = unioncabecera, aes(x=P6020)) + 
+      ylab("Cantidad") + xlab("Sexo") + ggtitle("Cantidad de personas segun el sexo")+ 
+      scale_x_discrete(limit = c("Hombre", "Mujer"))
+    
+    #varianzas
+    lapply(base2[])
+    
+    base2 %>% var()
+   
+    
+    
+    var(base2$ingtot)
+    
     ## Media de ingresos
     # por sexo
-    a <- base %>% group_by(sex) %>% summarize(mean(base$ingtot,na.rm = T));a
+    a <- base2 %>% group_by(sex) %>% summarize(mean(base$ingtot,na.rm = T));a
     # por edad
-    b <- base %>% group_by(age) %>% summarize(mean(ingtot,na.rm = T));b 
+    b <- base2 %>% group_by(age) %>% summarize(mean(ingtot,na.rm = T));b 
     # por estrato
-    c <- base %>% group_by(estrato1) %>% summarize(mean(ingtot,na.rm = T));c
+    c <- base2 %>% group_by(estrato1) %>% summarize(mean(ingtot,na.rm = T));c
  
     #graficas
     
@@ -154,20 +205,29 @@ print(url_base)
     ggsave(plot= grafico1 , file = "views/Grafico22.jpeg") # puedes agregar los temas predeterminados para mejorar la apariencia dle grafico
     
     #Grafica de ingreso promedio por edad
-    grafico2 <- plot(b,type="h",main = "ingreso promedio por edad", xlab = "Edad", ylab = "Ingreso promedio", col = "Darkblue",lwd=2, ylim=c(0,2000000),xlim=c(15,85))
+    grafico2 <- plot(b,type="h",main = "ingreso promedio por edad", xlab = "Edad", ylab = "Ingreso promedio", col = "Darkblue",lwd=2, ylim=c(0,9000000),xlim=c(15,85))
     ggsave(plot= grafico2 , file = "views/Grafico33.jpeg") # puedes agregar los temas predeterminados para mejorar la apariencia dle grafico
     
     
     
-variables=data.frame(base$edad, base$college ,base$Educlevel  ,base$age,base$estrato1,base$sex, base$regSalud,
-                     base$cotPension, base$ingtot, base$sizeFirm, 
-                     base$microempresa ,base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual,
-                     base$informal ,base$relab)
-
+    
+    
+    
 
 # crear variable "edad2"
-edad2 <- (edad^2)
-base = cbind(edad2)
+edad2 <- as.data.frame((base2$age^2))
+base2 <- cbind(base2, edad2)
+
+
+names(base2)[names(base2)=='(base2$age^2)']<- 'age2'
+
+# correr regresión 
+regresion1 <- lm(ingtot ~ age+age2, data= base2); regresion1
+
+
+
+
+
 # chequear variables con skim(dat) 
     skim(base)
     base %>%
@@ -176,8 +236,7 @@ base = cbind(edad2)
     descriptivas<-summary(base)
       view(descriptivas)
     
-# correr regresión 
-  regresion1<-lm(ingtot ~ age , data = base)
+
 
 # asignar nombre mod1 a regresión 
   mod1 = lm(ingreso ~ edad edad2, data = dat)
@@ -199,4 +258,14 @@ base = cbind(edad2)
     coef(lm(consumption~price+income, data = data, subset = index))
     
     boot(data = gas, statistic = eta.fn, R = 1000)
+    
+    
+    
+    #preguntas
+    
+    #como exportar
+    #outliers
+    #varianza
+    #missing salud
+    
     
