@@ -54,7 +54,7 @@
         
         head(df)
         
-      #Restrinjirlo solo para age>=18 y empleado 
+      #Restringirlo solo para age>=18 y empleado 
         base=subset(df, df$age>17)
         base=subset(base, base$ocu==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
         #base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
@@ -208,7 +208,10 @@
           #Grafica de ingreso promedio por edad
           grafico2 <- plot(b,type="h",main = "ingreso promedio por edad", xlab = "Edad", ylab = "Ingreso promedio", col = "Darkblue",lwd=2, ylim=c(0,9000000),xlim=c(15,85))
           ggsave(plot= grafico2 , file = "views/Grafico33.jpeg") # puedes agregar los temas predeterminados para mejorar la apariencia dle grafico
-          
+
+
+
+          #PUNTO 2 
           
           # crear variable "edad2"
           edad2 <- as.data.frame((base2$age^2))
@@ -263,7 +266,7 @@
           
           # ggplot de la gráfica de la clase de Lucas, cambiar nombres variables y las labs por edad (eje x) e ingreso (eje y)
           
-#PUNTO 2 
+
           # crear variable de logaritmo de p6500 y cambiar nombre a "logingreso"
             loging <- log(ingreso)
           # # cambiar nombre de variable p6020 a "sexo"
