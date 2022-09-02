@@ -13,6 +13,12 @@
         install.packages("rapportools")
         install.packages("apply")
         install.packages("lapply")
+        install.packages("stargazer")
+        install.packages("tidyverse")
+        install.packages("boot")
+        library(boot)
+        library(tidyverse)
+        library(stargazer)
         library(WRS2)
         library(rapportools)
         library(ggplot2)
@@ -23,7 +29,7 @@
         library(rvest, tidyverse)
         library(keep)
         #
-      
+    #IMPORTAR DATOS
       #Lectura de URL
         url <- "https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_1.html URL chunk 1"
         browseURL(url)
@@ -53,19 +59,19 @@
         }
         
         head(df)
-        
+    #LIMPIEZA DE LA BASE
       #Restringirlo solo para age>=18 y empleado 
         base=subset(df, df$age>17)
         base=subset(base, base$ocu==1) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-        #base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
-        #base2=subset(base2, age>17)
+        base2=subset(base, ocu) #¿ocu (2mil +) o p6240? con ocu se tienen personas ocupadas no remuneradas
+        base2=subset(base2, age>17)
         base=base[,-c(1)]
         #lista <- as.list(c(base$college, base$Educlevel, base$age, base$estrato1, base$sex, base$regSalud, base$cotPension, base$ingtot, base$sizeFirm, base$microempresa, base$oficio, base$hoursWorkActualSecondJob, base$hoursWorkUsual, base$informal, base$relab))
         #lista2 <- as.list(c('college', 'Educlevel', 'age', 'estrato1', 'sex', 'regSalud', 'cotPension', 'ingtot', 'sizeFirm','microempresa', 'oficio', 'hoursWorkActualSecondJob', 'hoursWorkUsual', 'informal', 'relab'))
         #lista3 <- c(college, maxEducLevel, age, estrato1, sex, regSalud, cotPension, ingtot, sizeFirm, microempresa, oficio, hoursWorkActualSecondJob, hoursWorkUsual, informal, relab)
        
-        base2 <- select(base,college, maxEducLevel, age, estrato1, sex, regSalud, cotPension, ingtot, sizeFirm, microEmpresa, oficio, hoursWorkActualSecondJob, hoursWorkUsual, informal, relab )
       #FIltro de variables 
+        base2 <- select(base,college, maxEducLevel, age, estrato1, sex, regSalud, cotPension, ingtot, sizeFirm, microEmpresa, oficio, hoursWorkActualSecondJob, hoursWorkUsual, informal, relab )
         #Caracteristicas persona
             #college
             #Educlevel 
@@ -105,7 +111,7 @@
             #informal
             #relab
         
-        #Missings 
+        #mPIEZA DE MISSIINGS VALUES  
         
           #individuo
           sum(is.na(base2$estrato1)) #0
@@ -133,29 +139,181 @@
           
           #Eliminarlos /reemplazarlos 
           base2 = subset(x = base2, subset = is.na(maxEducLevel)==FALSE) #eliminarlo
-          
-          
-          base2$regSalud = ifelse(is.na(base2$regSalud)==T,0,base2$regSalud)
-          base2$hoursWorkActualSecondJob = ifelse(is.na(base2$hoursWorkActualSecondJob)==T,0,base2$hoursWorkActualSecondJob)
+          base2$regSalud = ifelse(is.na(base2$regSalud)==T,0,base2$regSalud) #reemplazarlos
+          base2$hoursWorkActualSecondJob = ifelse(is.na(base2$hoursWorkActualSecondJob)==T,0,base2$hoursWorkActualSecondJob) #reemplazarlos
       
+        #CRUCES DE VARIABLES 
           table(base2$regSalud, base2$maxEducLevel)
-          table(base2$regSalud, base2$age)
+            "           1    3    4    5    6    7
+                   1   43  362  884 1104 3876 6080
+                   2    0    2   12   14  103  290
+                   3   70  313  484  517  753  214"
+          table(base2$age, base2$regSalud)
+          " EDAD   1   2   3  #1 CONTRIBUTIVO 2 ESPECIAL 3 SUBSIDIADO 
+              18  86   4  29
+              19 161   6  52
+              20 228   3  41
+              21 252   2  39
+              22 264   7  44
+              23 343   4  47
+              24 376   5  44
+              25 389   9  48
+              26 392   3  39
+              27 385   5  59
+              28 376  12  38
+              29 388   8  48
+              30 354  12  44
+              31 327  14  40
+              32 344  24  38
+              33 306  19  47
+              34 328  13  50
+              35 326  18  42
+              36 332   9  52
+              37 296   9  53
+              38 308  18  61
+              39 284   3  47
+              40 306  11  45
+              41 291   8  30
+              42 250   8  45
+              43 252  10  50
+              44 258   5  69
+              45 232   8  44
+              46 230   6  48
+              47 251  11  48
+              48 236  10  59
+              49 231   4  53
+              50 227  12  60
+              51 227  13  41
+              52 209   9  57
+              53 225   7  55
+              54 218   9  54
+              55 215  11  50
+              56 202   8  56
+              57 171   6  42
+              58 173   7  49
+              59 143   7  36
+              60 130   6  41
+              61 150   7  39
+              62  86   6  40
+              63  93   4  34
+              64  77   4  30
+              65  73   2  30
+              66  61   2  20
+              67  48   3  20
+              68  41   2   8
+              69  30   1  16
+              70  29   0  12
+              71  22   4  11
+              72  24   1  19
+              73  20   0   8
+              74   7   0   7
+              75   9   0   5
+              76  13   0   3
+              77  10   0   4
+              78   3   0   5
+              79   5   0   2
+              80  10   1   0
+              81   1   0   1
+              82   2   0   0
+              83   2   0   1
+              84   1   0   1
+              85   2   0   0
+              86   3   0   0
+              87   2   1   1
+              90   1   0   0
+              91   1   0   0
+              93   1   0   0
+              94   1   0   0
+            > "
           table(base2$regSalud, base2$sex)
+        " SALUD   0    1   #SEXO
+              1 5912 6438
+              2  189  232
+              3 1173 1178"
           table(base2$regSalud, base2$cotPension)
+          "      1    2    3
+              1 9039 2992  319  
+              2  289   72   60
+              3   61 2290    0 "
           table(base2$regSalud, base2$maxEducLevel)
-          
+          "      1    3    4    5    6    7  #1 Ninguna #2 preescolar #3PI #4 PC #5 SI #6 SC #7terciaria
+            1   43  362  884 1104 3876 6080   #Proporciones 
+            2    0    2   12   14  103  290
+            3   70  313  484  517  753  214"
           table(base2$hoursWorkActualSecondJob, base2$sex)
-          table(base2$hoursWorkActualSecondJob, base2$age)
+        "horas  0  1  #sexo
+            1   9  7
+            2  19 16
+            3  15 13
+            4  21 24
+            5  22 13
+            6  29 17
+            7   5  4
+            8  35 24
+            9   5  3
+            10 27 24
+            11  2  0
+            12 18 15
+            13  0  1
+            14 13 10
+            15 13 17
+            16  6  9
+            18  9  7
+            20 21 22
+            21  2  2
+            23  1  0
+            24  2 12
+            25  2  3
+            26  0  1
+            28  4  4
+            30  7  5
+            33  2  0
+            34  0  1
+            35  2  0
+            36  4  5
+            40  1  2
+            42  2  0
+            48  0  1
+            50  2  0"
+          table(base2$hoursWorkActualSecondJob, base2$age) #gráfico
           table(base2$hoursWorkActualSecondJob, base2$maxEducLevel)
       
-          
+          "    1  3  4  5  6  7
+          1   0  0  0  3  4  9
+          2   0  0  2  5  9 19
+          3   1  0  1  2  7 17
+          4   1  0  3  1  8 32
+          5   0  1  2  3  9 20
+          6   0  1  3  3 14 25
+          7   0  2  0  0  4  3
+          8   0  5  6  4  7 37
+          9   0  1  0  0  3  4
+          10  0  2  2  8 18 21
+          11  0  0  0  1  0  1
+          12  0  0  4  4  6 19
+          13  0  0  0  0  0  1
+          14  2  2  0  2  5 12
+          15  0  3  0  2  6 19
+          16  0  0  0  1  4 10
+          18  1  0  1  5  5  4
+          20  0  0  5  2  6 30
+          21  0  0  1  1  1  1
+          23  0  1  0  0  0  0
+          24  0  0  3  1  5  5
+          25  0  0  0  0  0  5
+          26  0  0  0  0  0  1
+          28  0  0  0  0  6  2
+          30  0  0  1  2  1  8
+          33  0  0  0  0  0  2
+          34  0  0  1  0  0  0
+          35  0  0  0  0  1  1
+          36  0  0  1  0  3  5
+          40  0  0  0  0  1  2
+          42  0  1  0  0  0  1
+          48  0  0  0  0  0  1
+          50  0  0  0  0  1  1"
           
            #Análisis descriptivo
-          
-          data(base2)
-          describe(base2)
-          
-          
           
           ingreso <- (as.data.frame(summary(base2))) ; ingreso
           output <- capture.output(ingreso, file=NULL, append =FALSE)
@@ -174,11 +332,15 @@
           
           dmedias<- t.test (base2$ingtot ~ base2$sex ) ;dmedias
           Grafico_dmedias <- boxplot(base2$ingtot ~ base2$sex, col= "gray", xlab ="sexo", ylab = "ingreso total")
+          #diferencia de medias para edades >50 y <50 
+          stargazer(type="text", title ="difmean gen", TRUE) #exportarlo 
           
           gp <-  ggplot() + geom_histogram(data = base2,aes(x=ingtot));gp
+          gp2<- ggplot()+geom_point(data=base2, aes(y=ingtot, x=age));gp2
           g<- plot(base2$age, base2$ingtot)
           
-          grafico1 <- ggplot() + geom_histogram(data = unioncabecera, aes(x=P6020)) + 
+          grafico1 <- ggplot() + geom_histogram(data = base2, aes(x=age));grafico1
+          
             ylab("Cantidad") + xlab("Sexo") + ggtitle("Cantidad de personas segun el sexo")+ 
             scale_x_discrete(limit = c("Hombre", "Mujer"))
           
@@ -186,20 +348,42 @@
           lapply(base2[])
           
           base2 %>% var()
-         
-          
-          
           var(base2$ingtot)
+          "7.158984e+12"
+          var(base2$age)
+          " 181.7871"
+          var(base2$hoursWorkActualSecondJob)
+          "79.56467"
+          var(base2$hoursWorkUsual)
+          "241.5766"
           
           ## Media de ingresos
           # por sexo
           a <- base2 %>% group_by(sex) %>% summarize(mean(base$ingtot,na.rm = T));a
+          "0  1769379
+           1  1769379"
           # por edad
           b <- base2 %>% group_by(age) %>% summarize(mean(ingtot,na.rm = T));b 
+          "      18                   697774.
+                 19                   793232.
+                 20                   822194.
+                 21                   960762.
+                 22                  1035891.
+                 23                  1115837.
+                 24                  1213093.
+                 25                  1412683.
+                 26                  1485837.
+                 27                  1414338."
           # por estrato
           c <- base2 %>% group_by(estrato1) %>% summarize(mean(ingtot,na.rm = T));c
-       
-          #graficas
+                 "1                   926645.
+                  2                  1131979.
+                  3                  1636072.
+                  4                  3866322.
+                  5                  5622865.
+                  6                  9076656."
+         
+           #graficas
           
           #grafico de dispersi?n del ingreso promedio por sexo
           grafico1 <- plot(a, main = "ingreso promedio por sexo", xlab = "sexo", ylab = "Ingreso promedio", pch = 21,  bg = "yellow", col = "red", cex = 1, lwd = 2)
@@ -244,8 +428,6 @@
           lm_summary = summary(regresion1)$coefficients
           lm_summary_print = lm_summary
           
-          plot(base2$ingtot, base2$age, xlab='Edad', ylab='Igreso total')
-          abline(regresion1)
           #Intervalos de confianza 
           predict(regresion1)
           confint(regresion1)
@@ -260,7 +442,7 @@
                         Df     Sum Sq    Mean Sq F value    Pr(>F)    
           age           1 1.6071e+15 1.6071e+15 228.375 < 2.2e-16 ***
           age2          1 4.2495e+14 4.2495e+14  60.388 8.244e-15 ***
-          Residuals 16539 1.1638e+17 7.0370e+12                      
+          Residuals   16539 1.1638e+17 7.0370e+12                      
           ---
             Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
           
@@ -273,16 +455,42 @@
             sexo <- p6050
           
           #Errores bootstrap
-              install.packages("boot")
-              boot(data, statistic, R)
+
+              #Primer comando
+              set.seed(12345)
+              eta.fn<-function(base2,i){
+                coef(lm(ingtot~age+age2,data=base2, subset= i))
+              }
+              boot(data = base2, statistic = eta.fn, R = 1000)
+               "Bootstrap Statistics :
+                      original       bias    std. error
+                t1* -436662.9269 -1569.839967 221218.8227
+                t2*   91143.4584    93.910568  12645.6207
+                t3*    -799.2612    -1.141879    161.5544"
+              hist(eta_mod1)
+              mean(eta_mod1) #23179.65
+              sqrt(var(eta_mod1)) #1849.62
+              quantile(eta_mod1,c(0.025,0.975)) # 2.5%       97.5% 
               
-              eta.fn<-function(data,index)f
-              coef(lm(consumption~price+income, data = data, subset = index))
+
+              #Segundo comando
+                set.seed(112)
+                n<- length(base2$ingtot)
+                R<-1000
+                eta_mod1<- rep(0,R)
+                for (i in 1:R){
+                  db_sample<- sample_frac(base2,size=1, replace=TRUE)
+                  f<- lm(ingtot~age+age2, db_sample)
+                  coefs<- f$coefficients
+                  eta_mod1[i]<- coefs[2]
+                }
+              hist(eta_mod1)
+              mean(eta_mod1) #91089.93
+              sqrt(var(eta_mod1)) #12442.51
+              quantile(eta_mod1,c(0.025,0.975)) # 2.5%       97.5% 
+                                                #64530.63   114208.89 
               
-              boot(data = gas, statistic = eta.fn, R = 1000)
-              
-    
-#3ER PUNT
+#3ER PUNTO
     #tabla de correlación
     correlacion <- (as.data.frame(cor(base2))) ; correlacion
     output_corr <- capture.output(correlacion, file=NULL, append =FALSE)
