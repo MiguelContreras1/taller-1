@@ -471,21 +471,25 @@
               mean(eta_mod1) #23179.65
               sqrt(var(eta_mod1)) #1849.62
               quantile(eta_mod1,c(0.025,0.975)) # 2.5%       97.5% 
-              
+              |                               #64530.63    114208.89 
 
               #Segundo comando
                 set.seed(112)
                 n<- length(base2$ingtot)
                 R<-1000
                 eta_mod1<- rep(0,R)
+                eta_mod2<-rep(0,R)
+                eta_mod3<-rep(0,R)
                 for (i in 1:R){
                   db_sample<- sample_frac(base2,size=1, replace=TRUE)
                   f<- lm(ingtot~age+age2, db_sample)
                   coefs<- f$coefficients
                   eta_mod1[i]<- coefs[2]
+                  eta_mod2[i]<- coefs[1]
+                  eta_mod3[i]<- coefs[3]
                 }
-              hist(eta_mod1)
-              mean(eta_mod1) #91089.93
+              hist(eta_mod3)
+              mean(eta_mod3) #91089.93
               sqrt(var(eta_mod1)) #12442.51
               quantile(eta_mod1,c(0.025,0.975)) # 2.5%       97.5% 
                                                 #64530.63   114208.89 
